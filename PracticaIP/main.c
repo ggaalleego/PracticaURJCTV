@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #define MAXNOMBRE 20
 #define MAXAPELLIDO 50
 #define MAXDNI 9
@@ -54,11 +55,17 @@ typedef struct {
 } tipoListaReproducciones;
 
 void menu();
+void leerUsuario (tipoUsuario *nuevoUsuario);
+void mostrarUsuario (tipoUsuario usuario);
+int buscarUsuarioURJC (tipoListaUsuarios lista, char UsuarioURJC[MAXCHARUSUARIO]);
+void altaUsuario (tipoListaUsuarios *lista, tipoUsuario nuevo);
+void bajaUsuario (tipoListaUsuarios *lista, tipoUsuario eliminado);
 void cargarUsuarios(FILE *punteroFichero,tipoListaUsuarios listaDeUsuarios);
 void cargarRecursos(FILE *punteroFichero,tipoListaRecursos listaDeRecursos );
 void cargarReproducciones(FILE *punteroFichero,tipoListaReproducciones listaDeReproducciones);
 int main() {
     char opcion;
+    tipoUsuario usuario;
     FILE *pFichero;
     tipoListaUsuarios listaUsuarios;
 
@@ -158,6 +165,75 @@ void menu(){
     printf("\no) Generar informe de usuarios en archivo");
     printf("\np) Salir\n");
 }
+void leerUsuario (tipoUsuario *nuevoUsuario){
+    printf("Nombre del usuario: ");
+    scanf("%s\n", nuevoUsuario->nombre);
+    printf("Apellidos del usuario: ");
+    scanf("%s\n", nuevoUsuario->apellidos);
+    printf("DNI del usuario: ");
+    scanf("%s\n", nuevoUsuario->dni);
+    printf("Usuario URJC: ");
+    scanf("%s\n", nuevoUsuario->usuarioURJC);
+    nuevoUsuario->saldo=1000;
+    printf("Perfil del usuario: ");
+    scanf("%s\n", nuevoUsuario->perfil);
+}
+
+void mostrarUsuario (tipoUsuario usuario){
+    printf("\n Nombre: %s", usuario.nombre);
+    printf("\n Apellidos: %s", usuario.apellidos);
+    printf("\n DNI: %s", usuario.dni);
+    printf("\n Usuario URJC: %s", usuario.usuarioURJC);
+    printf("\n Saldo: %f", usuario.saldo);
+    printf("\n Perfil: %s", usuario.perfil);
+}
+
+int buscarUsuarioURJC (tipoListaUsuarios lista, char usuarioURJC[MAXCHARUSUARIO]) {
+    int i;
+    i = 0;
+    while ((i < lista.tope) && (strcmp(usuarioURJC, lista.listaUsuarios[i].usuarioURJC) != 0)) {
+        i++;
+    }
+    if (i > lista.tope) {
+        i = -1;
+    }
+    return i;
+}
+
+void altaUsuario (tipoListaUsuarios *lista, tipoUsuario nuevo){
+    int posicion;
+    if(lista->tope>=MAXUSUARIOS){
+        printf("La lista de usuarios esta llena, no se puede aÃ±adir el usuario\n");
+    }
+    else{
+        posicion= buscarUsuarioURJC(*lista, nuevo.usuarioURJC);
+        if(posicion == -1){
+            lista->listaUsuarios[lista->tope]=nuevo;
+            lista->tope++;
+            printf("Usuario aÃ±adido\n");
+        }
+        else{
+            printf("Usuario URJC repetido, no se puede aÃ±adir\n");
+        }
+    }
+}
+
+void bajaUsuario (tipoListaUsuarios *lista, tipoUsuario eliminado){
+    int posicion;
+    int i;
+    posicion = buscarUsuarioURJC(*lista, eliminado.usuarioURJC);
+    if (posicion==-1){
+        printf("El usuario no esta en la lista\n");
+    }
+    else{
+        for (i=posicion;i<lista->tope;i++){
+            lista->listaUsuarios[i]=lista->listaUsuarios[i+1];
+        }
+        lista->tope--;
+        printf("Usuario eliminado\n");
+    }
+}
+
 void cargarUsuarios(FILE *punteroFichero,tipoListaUsuarios listaDeUsuarios){
    char ruta [MAXNOMBRE];
    int i, fwControl, resultado;
