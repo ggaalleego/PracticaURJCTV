@@ -60,15 +60,20 @@ void mostrarUsuario (tipoUsuario usuario);
 int buscarUsuarioURJC (tipoListaUsuarios lista, char UsuarioURJC[MAXCHARUSUARIO]);
 void altaUsuario (tipoListaUsuarios *lista, tipoUsuario nuevo);
 void bajaUsuario (tipoListaUsuarios *lista, tipoUsuario eliminado);
+void leerRecurso (tipoRecurso *nuevoRecurso);
+int buscarRecursoURJC (tipoListaRecursos lista, int id );
+void altaRecurso (tipoListaRecursos *lista, tipoRecurso nuevo);
+void bajaRecurso (tipoListaRecursos *lista, tipoRecurso eliminado);
 void cargarUsuarios(FILE *punteroFichero,tipoListaUsuarios listaDeUsuarios);
 void cargarRecursos(FILE *punteroFichero,tipoListaRecursos listaDeRecursos );
 void cargarReproducciones(FILE *punteroFichero,tipoListaReproducciones listaDeReproducciones);
 int main() {
     char opcion;
-    tipoUsuario usuario;
     FILE *pFichero;
+    tipoUsuario usuario;
+    tipoRecurso recurso;
     tipoListaUsuarios listaUsuarios;
-
+    tipoListaRecursos listaRecursos;
     do{
         fflush(stdin);
         menu();
@@ -231,6 +236,71 @@ void bajaUsuario (tipoListaUsuarios *lista, tipoUsuario eliminado){
         }
         lista->tope--;
         printf("Usuario eliminado\n");
+    }
+}
+/*
+ * typedef struct {
+    int id;
+    char titulo[MAXTITULO];
+    char ambito[MAXAMBITO];
+    char genero [MAXGENERO];
+    float coste;
+    int duracion;
+} tipoRecurso;
+ */
+void leerRecurso (tipoRecurso *nuevoRecurso){
+    //Falta generar ID de la cancion Random
+    //Falta control de errores (hay maximo de caracteres)
+    printf("Titulo de la cancion: ");
+    scanf("%s\n", nuevoRecurso->titulo);
+    printf("Apellidos del usuario: ");
+    scanf("%s\n", nuevoRecurso->ambito);
+    printf("DNI del usuario: ");
+    scanf("%s\n", nuevoRecurso->coste);
+    printf("Usuario URJC: ");
+    scanf("%s\n", nuevoRecurso->duracion);
+}
+int buscarRecursoURJC (tipoListaRecursos lista, int id ) {
+    int i;
+    i = 0;
+    while ((i <= lista.tope) && (id != lista.listaRecursos[i].id)){
+        i++;
+    }
+    if (i > lista.tope) {
+        i = -1;
+    }
+    return i;
+}
+void altaRecurso (tipoListaRecursos *lista, tipoRecurso nuevo){
+    int posicion;
+    if(lista->tope>=MAXRECURSOS){
+        printf("La lista de canciones esta llena, no se puede aÃ±adir el recurso\n");
+    }
+    else{
+        posicion= buscarRecursoURJC(*lista, nuevo.id);
+        if(posicion == -1){
+            lista->listaRecursos[lista->tope]=nuevo;
+            lista->tope++;
+            printf("Recurso aÃ±adido\n");
+        }
+        else{
+            printf("Recurso repetido, no se puede aÃ±adir\n");
+        }
+    }
+}
+void bajaRecurso (tipoListaRecursos *lista, tipoRecurso eliminado){
+    int posicion;
+    int i;
+    posicion = buscarRecursoURJC(*lista, eliminado.id);
+    if (posicion==-1){
+        printf("El recurso no esta en la lista\n");
+    }
+    else{
+        for (i=posicion;i<lista->tope;i++){
+            lista->listaRecursos[i]=lista->listaRecursos[i+1];
+        }
+        lista->tope--;
+        printf("Recurso eliminado\n");
     }
 }
 
