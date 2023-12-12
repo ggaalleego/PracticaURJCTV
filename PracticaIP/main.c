@@ -8,7 +8,7 @@
 #define MAXTITULO 50
 #define MAXAMBITO 20
 #define MAXGENERO 20
-#define MAXFECHA 10
+#define MAXFECHA 11
 #define MAXUSUARIOS 50 //nÃºmero mÃ¡ximo de usuarios
 #define MAXRECURSOS 70 //nÃºmero mÃ¡ximo de recursos
 #define MAXREPRODUCCIONES 80 //nÃºmero mÃ¡ximo de reproducciones
@@ -55,6 +55,9 @@ typedef struct {
 } tipoListaReproducciones;
 
 void menu();
+void mostrarListadoUsuariosURJC(tipoUsuario usuario , tipoListaUsuarios lista);
+void mostrarListadoRecursos(tipoRecurso recurso, tipoListaRecursos lista);
+void mostrarListadoReproducciones(tipoReproduccion reproduccion, tipoListaReproducciones lista);
 void leerUsuario (tipoUsuario *nuevoUsuario);
 void mostrarUsuario (tipoUsuario usuario);
 int buscarUsuarioURJC (tipoListaUsuarios lista, char UsuarioURJC[MAXCHARUSUARIO]);
@@ -82,10 +85,13 @@ int main() {
             case 'A':
 	     	 case 'a':
                 printf("Alta usuario\n");
+                leerUsuario(&usuario);
+                altaUsuario(&listaUsuarios, usuario);
                 break;
             case 'B':
                 case 'b':
                 printf("Baja usuario\n");
+                bajaUsuario(&listaUsuarios, usuario);
                 break;
 		case 'C':
             case 'c':
@@ -170,9 +176,58 @@ void menu(){
     printf("\no) Generar informe de usuarios en archivo");
     printf("\np) Salir\n");
 }
+void mostrarListadoUsuariosURJC(tipoUsuario usuario,tipoListaUsuarios lista) {
+    int i;
+    printf("\n usuarios URJC \n");
+
+    if (lista.tope <= 0) {
+        printf("\n la lista esta vacia\n");
+    } else {
+        for (i = 0; i <= lista.tope; i++) {
+            printf("\n contacto num %d:   ", i + 1);
+            printf("nombre :%s      ", usuario.nombre);
+            printf("apedido:%s      ", usuario.apellidos);
+            printf("saldo:%f        ", usuario.saldo);
+        }
+    }
+}
+void mostrarListadoRecursos(tipoRecurso recurso,tipoListaRecursos lista){
+    int i;
+    printf("\n multimedia URJCTV \n");
+    if(lista.tope<=0){
+        printf("\n lista vacia \n");
+    }else{
+        for(i = 0;i<=lista.tope;i++){
+        printf("\n id: %d   ",i+1);
+        printf("titulo :%s      ",recurso.titulo);
+        printf("ambito:%s      ",recurso.ambito);
+        printf("genero:%s      ",recurso.genero);
+        printf("coste:%f        ",recurso.coste);
+        printf("duracion: %d minutos   ",recurso.duracion);
+        }
+    }
+}
+void mostrarListadoReproducciones(tipoReproduccion reproduccion, tipoListaReproducciones lista){
+    int i;
+    printf("\n reproducciones \n");
+    if(lista.tope<=0){
+        printf("\n lista vacia \n");
+    }else{
+        for(i = 0;i<=lista.tope;i++){
+            printf("\n reprduccion numero %d:   ",i+1);
+            printf("fecha :%s      ",reproduccion.fecha);
+            printf("usuario:%s    ",reproduccion.usuarioURJC);
+            printf("id:%d           ",reproduccion.id);
+        }
+    }
+
+
+}
+
 void leerUsuario (tipoUsuario *nuevoUsuario){
+    fflush(stdin);
     printf("Nombre del usuario: ");
-    scanf("%s\n", nuevoUsuario->nombre);
+    scanf(" %s\n", nuevoUsuario->nombre);
     printf("Apellidos del usuario: ");
     scanf("%s\n", nuevoUsuario->apellidos);
     printf("DNI del usuario: ");
@@ -208,7 +263,7 @@ int buscarUsuarioURJC (tipoListaUsuarios lista, char usuarioURJC[MAXCHARUSUARIO]
 void altaUsuario (tipoListaUsuarios *lista, tipoUsuario nuevo){
     int posicion;
     if(lista->tope>=MAXUSUARIOS){
-        printf("La lista de usuarios esta llena, no se puede aÃ±adir el usuario\n");
+        printf("La lista de usuarios esta llena, no se puede anyadir el usuario\n");
     }
     else{
         posicion= buscarUsuarioURJC(*lista, nuevo.usuarioURJC);
