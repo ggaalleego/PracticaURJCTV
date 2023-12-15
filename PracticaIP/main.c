@@ -5,42 +5,42 @@
 #include <windows.h>
 #include <unistd.h>
 
-#define MAXNOMBRE 21 //Sumado +1 caracter nulo
-#define MAXAPELLIDO 51 //Sumado +1 caracter nulo
-#define MAXDNI 10 //Sumado +1 caracter nulo
-#define MAXCHARUSUARIO 10 //Sumado +1 caracter nulo
-#define MAXPERFIL 6 //Sumado +1 caracter nulo
-#define MAXTITULO 51 //Sumado +1 caracter nulo
-#define MAXAMBITO 21 //Sumado +1 caracter nulo
-#define MAXGENERO 21 //Sumado +1 caracter nulo
-#define MAXFECHA 11 //Sumado +1 caracter nulo
+#define MAXNOMBRE 20
+#define MAXAPELLIDO 50
+#define MAXDNI 9
+#define MAXCHARUSUARIO 9
+#define MAXPERFIL 5
+#define MAXTITULO 50
+#define MAXAMBITO 20
+#define MAXGENERO 20
+#define MAXFECHA 10
 #define MAXUSUARIOS 50 //Numero maximo de usuarios
 #define MAXRECURSOS 70 //Numero maximo de usuarios
 #define MAXREPRODUCCIONES 80 //Numero maximo de usuarios
 
 //usuario
 typedef struct {
-    char nombre[MAXNOMBRE/*+1*/];
-    char apellidos[MAXAPELLIDO/*+1*/];
-    char dni[MAXDNI/*+1*/];
-    char usuarioURJC[MAXCHARUSUARIO/*+1*/];
+    char nombre[MAXNOMBRE+1];
+    char apellidos[MAXAPELLIDO+1];
+    char dni[MAXDNI+1];
+    char usuarioURJC[MAXCHARUSUARIO+1];
     float saldo;
-    char perfil[MAXPERFIL/*+1*/];
+    char perfil[MAXPERFIL+1];
 } tipoUsuario;
 
 // recursos
 typedef struct {
     int id;
-    char titulo[MAXTITULO/*+1*/];
-    char ambito[MAXAMBITO/*+1*/];
-    char genero [MAXGENERO/*+1*/];
+    char titulo[MAXTITULO+1];
+    char ambito[MAXAMBITO+1];
+    char genero [MAXGENERO+1];
     float coste;
     int duracion;
 } tipoRecurso;
 // reproducciones
 typedef struct {
-    char fecha[MAXFECHA/*+1*/];
-    char usuarioURJC[MAXCHARUSUARIO/*+1*/];
+    char fecha[MAXFECHA+1];
+    char usuarioURJC[MAXCHARUSUARIO+1];
     int id;
 } tipoReproduccion;
 // listado usuarios
@@ -92,7 +92,6 @@ void ordenarUsuariosAlfabeticamente(tipoListaUsuarios *lista);
 void ordenarId(tipoListaRecursos *lista);
 void ordenarPorFecha(tipoListaReproducciones *lista);
 int main() {
-    int random;
     char opcion;
     char usuarioURJC[MAXCHARUSUARIO];
     int idRecurso;
@@ -303,9 +302,9 @@ void mostrarReproduccion(tipoReproduccion reproduccion){
 }
 void mostrarListadoReproducciones(tipoListaReproducciones lista){
     int i;
-    printf("\n reproducciones \n");
+    printf("\n Reproducciones \n");
     if(lista.tope<=0){
-        printf("\n lista vacia \n");
+        printf("\n Lista vacia \n");
     }else{
         ordenarPorFecha(&lista);
         for(i = 0;i<lista.tope;i++){
@@ -317,19 +316,27 @@ void mostrarListadoReproducciones(tipoListaReproducciones lista){
 
 void leerUsuario (tipoUsuario *nuevoUsuario){
     printf("Nombre del usuario:");
-    scanf("%s",nuevoUsuario->nombre);
+    fflush(stdin);
+    gets(nuevoUsuario->nombre);
+    fflush(stdin);
     printf("Apellidos del usuario:");
-    scanf("%s",nuevoUsuario->apellidos);
+    fflush(stdin);
+    gets(nuevoUsuario->apellidos);
+    fflush(stdin);
     do {
         printf("DNI del usuario:");
-        scanf("%s",nuevoUsuario->dni);
+        fflush(stdin);
+        gets(nuevoUsuario->dni);
+        fflush(stdin);
         printf("%s\n",nuevoUsuario->dni);
-    }while(strlen(nuevoUsuario->dni) != MAXDNI-1);
+    }while(strlen(nuevoUsuario->dni) != MAXDNI);
     printf("Usuario URJC:");
-    scanf("%s",nuevoUsuario->usuarioURJC);
+    fflush(stdin);
+    gets(nuevoUsuario->usuarioURJC);
     nuevoUsuario->saldo=1000;
     printf("Elija el perfil del usuario (ALU/PDI/PTGAS/PPI): ");
-    scanf(" %s",nuevoUsuario->perfil);
+    gets(nuevoUsuario->perfil);
+    fflush(stdin);
 }
 
 int buscarUsuarioURJC (tipoListaUsuarios lista, char usuarioURJC[MAXCHARUSUARIO]) {
@@ -412,16 +419,18 @@ void leerRecurso (tipoRecurso *nuevoRecurso,tipoListaRecursos lista){
     nuevoRecurso->id = generarIDRecuso(lista);
     do {
         printf("Titulo de la cancion:");
-        scanf("%s", nuevoRecurso->titulo);
-    }while(sizeof(nuevoRecurso->titulo)>MAXTITULO);
+        fflush(stdin);
+        gets( nuevoRecurso->titulo);
+        fflush(stdin);
+    }while(strlen(nuevoRecurso->titulo)>(MAXTITULO+1));
     do{
         printf("Ambito (formacion, cultura o entretenimiento):");
-        scanf("%s", nuevoRecurso->ambito);
-    }while(sizeof(nuevoRecurso->ambito)>MAXAMBITO);
+        gets(nuevoRecurso->ambito);
+    }while(strlen(nuevoRecurso->ambito)>(MAXAMBITO+1));
     do{
         printf("Genero (documental, formativo, accion, ciencia ficcion, drama, comedia, belicas, romantica, terror, animacion, historica o suspense):");
-        scanf("%s", nuevoRecurso->genero);
-    }while(sizeof(nuevoRecurso->genero)>MAXGENERO);
+        gets( nuevoRecurso->genero);
+    }while(strlen(nuevoRecurso->genero)>(MAXGENERO+1));
     do{
         printf("Coste:");
         scanf("%f", &(nuevoRecurso->coste));
@@ -430,7 +439,6 @@ void leerRecurso (tipoRecurso *nuevoRecurso,tipoListaRecursos lista){
         printf("Duracion (en minutos):");
         scanf("%d", &nuevoRecurso->duracion);
     }while (&nuevoRecurso->duracion < 0);
-
 }
 int buscarRecursoURJC (tipoListaRecursos lista, int id ) {
     int i;
