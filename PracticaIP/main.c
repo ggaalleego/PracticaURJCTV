@@ -60,39 +60,56 @@ typedef struct {
 } tipoListaReproducciones;
 
 void menu();
+
+
+//Subprogramas de usuarios
 void mostrarUsuario (tipoUsuario usuario);
 void mostrarListadoUsuariosURJC(tipoListaUsuarios lista);
-void mostrarRecurso (tipoRecurso recurso);
-void mostrarListadoRecursos(tipoListaRecursos lista);
-void mostrarReproduccion(tipoReproduccion reproduccion);
-void mostrarListadoReproducciones(tipoListaReproducciones lista);
 void leerUsuario (tipoUsuario *nuevoUsuario);
 int buscarUsuarioURJC (tipoListaUsuarios lista, char UsuarioURJC[MAXCHARUSUARIO]);
 void altaUsuario (tipoListaUsuarios *lista, tipoUsuario nuevo);
-void borrarReproducciones (tipoListaReproducciones *lista, tipoReproduccion eliminado);
 void bajaUsuario (tipoListaUsuarios *lista, tipoUsuario eliminado,tipoListaReproducciones *lista2);
+void guardarUsuarios(FILE *punteroFichero, tipoListaUsuarios listaDeUsuarios);
+void cargarUsuarios(FILE *punteroFichero,tipoListaUsuarios *listaDeUsuarios);
+void relojArena();
+void generarInformeUsuarios(FILE *punteroFichero,tipoListaUsuarios listaUsuarios, tipoListaReproducciones listaReproducciones);
+void ordenarUsuariosAlfabeticamente(tipoListaUsuarios *lista);
+
+
+//Subprogramas de recursos
+void mostrarRecurso (tipoRecurso recurso);
+void mostrarListadoRecursos(tipoListaRecursos lista);
 int generarIDRecuso(tipoListaRecursos lista);
 void leerRecurso (tipoRecurso *nuevoRecurso,tipoListaRecursos lista);
 int buscarRecursoURJC (tipoListaRecursos lista, int id );
 void altaRecurso (tipoListaRecursos *lista, tipoRecurso nuevo);
 void bajaRecurso (tipoListaRecursos *lista, tipoRecurso eliminado,tipoListaReproducciones listaReproducciones);
+void guardarRecursos(FILE *punteroFichero,tipoListaRecursos listaDeRecursos );
+void cargarRecursos(FILE *punteroFichero,tipoListaRecursos *listaDeRecursos );
+void ordenarId(tipoListaRecursos *lista);
+
+
+//Subprogramas de reproducciones
+void altaReproduccion(tipoListaReproducciones *lista, tipoReproduccion nuevo);
+void generarFecha (char *fecha[MAXFECHA+1],char anyo[5],char mes[3], char dia[3]);
+void mostrarReproduccion(tipoReproduccion reproduccion);
+void mostrarListadoReproducciones(tipoListaReproducciones lista);
+void borrarReproducciones (tipoListaReproducciones *lista, tipoReproduccion eliminado);
 int buscarReproduccionURJC (tipoListaReproducciones lista, char usuarioURJC[MAXCHARUSUARIO]);
 int buscarReproduccionID (tipoListaReproducciones lista, int id);
-void reproduccionRecursoMultimedia (int posicionUsuario, int posicionRecurso, tipoListaRecursos *listaRecursos, tipoListaUsuarios *listaUsuarios, tipoListaReproducciones *listaReproducciones );
-void guardarUsuarios(FILE *punteroFichero, tipoListaUsuarios listaDeUsuarios);
-void guardarRecursos(FILE *punteroFichero,tipoListaRecursos listaDeRecursos );
+void reproduccionRecursoMultimedia (int posicionUsuario, int posicionRecurso, tipoListaRecursos *listaRecursos, tipoListaUsuarios *listaUsuarios, tipoListaReproducciones *listaReproducciones, char fecha[MAXFECHA+1] );
 void guardarReproducciones(FILE *punteroFichero,tipoListaReproducciones listaDeReproducciones);
-void cargarUsuarios(FILE *punteroFichero,tipoListaUsuarios *listaDeUsuarios);
-void cargarRecursos(FILE *punteroFichero,tipoListaRecursos *listaDeRecursos );
 void cargarReproducciones(FILE *punteroFichero,tipoListaReproducciones *listaDeReproducciones);
 int contadorReproducciones(tipoListaReproducciones lista, char usuarioURJC[MAXNOMBRE]);
-void relojArena();
-void generarInformeUsuarios(FILE *punteroFichero,tipoListaUsuarios listaUsuarios, tipoListaReproducciones listaReproducciones);
-void ordenarUsuariosAlfabeticamente(tipoListaUsuarios *lista);
-void ordenarId(tipoListaRecursos *lista);
 void ordenarPorFecha(tipoListaReproducciones *lista);
+
+
 int main() {
     char opcion;
+    char fecha[MAXFECHA+1];
+    char dia[3];
+    char mes[3];
+    char anyo[5];
     char usuarioURJC[MAXCHARUSUARIO];
     int idRecurso;
     FILE *pFichero;
@@ -111,45 +128,43 @@ int main() {
         scanf("%c",&opcion);
         switch (opcion){
             case 'A':
-	     	 case 'a':
+            case 'a':
                 printf("Alta usuario\n");
                 leerUsuario(&usuario);
                 altaUsuario(&listaUsuarios, usuario);
-                mostrarListadoUsuariosURJC(listaUsuarios);
                 break;
             case 'B':
-                case 'b':
+            case 'b':
                 printf("Baja usuario\n");
                 printf("Introduzca el usuario URJC del usuario que quiere eliminar\n");
                 scanf("%s",usuario.usuarioURJC);
                 buscarUsuarioURJC(listaUsuarios, usuario.usuarioURJC);
                 bajaUsuario(&listaUsuarios, usuario,&listaReproducciones);
-                mostrarListadoUsuariosURJC(listaUsuarios);
                 break;
-		case 'C':
+            case 'C':
             case 'c':
                 printf("Alta recurso multimedia\n");
                 leerRecurso(&recurso,listaRecursos);
                 altaRecurso(&listaRecursos, recurso);
-                mostrarListadoRecursos(listaRecursos);
                 break;
             case 'd':
-		case 'D':
+            case 'D':
                 printf("Baja recurso multimedia\n");
+                printf("Introduzca el ID del recurso que quiere eliminar\n");
+                scanf("%d",&recurso.id);
                 bajaRecurso(&listaRecursos, recurso,listaReproducciones);
-                mostrarListadoRecursos(listaRecursos);
                 break;
             case 'E':
-		 case 'e':
+            case 'e':
                 printf("Listado usuarios\n");
                 mostrarListadoUsuariosURJC(listaUsuarios);
                 break;
             case 'F':
-		case 'f':
+            case 'f':
                 printf("Listado recursos multimedia\n");
                 mostrarListadoRecursos(listaRecursos);
                 break;
-        case 'G':
+            case 'G':
             case 'g':
                 printf("Listado reproducciones\n");
                 mostrarListadoReproducciones(listaReproducciones);
@@ -165,12 +180,13 @@ int main() {
                     printf("Introduzca el id del recurso a reproducir:");
                     scanf("%d",&idRecurso);
                 }while (buscarRecursoURJC(listaRecursos,idRecurso) == -1);
-                reproduccionRecursoMultimedia(buscarUsuarioURJC(listaUsuarios, usuarioURJC), buscarRecursoURJC(listaRecursos,idRecurso),&listaRecursos,&listaUsuarios,&listaReproducciones);
-                mostrarListadoReproducciones(listaReproducciones);
-                mostrarListadoUsuariosURJC(listaUsuarios);
-                mostrarListadoRecursos(listaRecursos);
+                //generarFecha se podria haber puesto al principio, pero hemos decidido ponerlo aqui para poder hacer pruebas con distintas fechas
+                fflush(stdin);
+                generarFecha(fecha, anyo,mes,dia);
+                fflush(stdin);
+                reproduccionRecursoMultimedia(buscarUsuarioURJC(listaUsuarios, usuarioURJC), buscarRecursoURJC(listaRecursos,idRecurso),&listaRecursos,&listaUsuarios,&listaReproducciones, fecha);
                 break;
-		 case 'I':
+            case 'I':
             case 'i':
                 printf("Guardar usuarios\n");
                 if (listaUsuarios.tope==0){
@@ -179,7 +195,7 @@ int main() {
                     guardarUsuarios(pFichero,listaUsuarios);
                 }
                 break;
-		 case 'J':
+            case 'J':
             case 'j':
                 printf("Guardar recursos multimedia\n");
                 if (listaRecursos.tope == 0){
@@ -188,7 +204,7 @@ int main() {
                     guardarRecursos(pFichero, listaRecursos);
                 }
                 break;
-		 case 'K':
+            case 'K':
             case 'k':
                 printf("Guardar reproducciones\n");
                 if(listaReproducciones.tope == 0){
@@ -197,22 +213,22 @@ int main() {
                     guardarReproducciones(pFichero, listaReproducciones);
                 }
                 break;
-		case 'L':
+            case 'L':
             case 'l':
                 printf("Cargar usuarios\n");
                 cargarUsuarios(pFichero,&listaUsuarios);
                 break;
-		case 'M':
+            case 'M':
             case 'm':
                 printf("Cargar recursos multimedia\n");
                 cargarRecursos(pFichero,&listaRecursos);
                 break;
-		case 'N':
+            case 'N':
             case 'n':
                 printf("Cargar reproducciones\n");
                 cargarReproducciones(pFichero,&listaReproducciones);
                 break;
-		case 'O':
+            case 'O':
             case 'o':
                 printf("Generar informe de usuarios en archivo\n");
                 if(listaUsuarios.tope == 0){
@@ -221,7 +237,7 @@ int main() {
                     generarInformeUsuarios(pFichero, listaUsuarios, listaReproducciones);
                 }
                 break;
-		case 'P':
+            case 'P':
             case 'p':
                 printf("Fin del programa\n");
                 break;
@@ -259,7 +275,7 @@ void mostrarUsuario (tipoUsuario usuario){
     printf("\nDNI: %s", usuario.dni);
     printf("\nUsuario URJC: %s", usuario.usuarioURJC);
     printf("\nSaldo: %.2f", usuario.saldo);
-    printf("\nPerfil: %s", usuario.perfil);
+    printf("\nPerfil: %s\n", usuario.perfil);
 }
 
 void mostrarListadoUsuariosURJC(tipoListaUsuarios lista) {
@@ -270,7 +286,7 @@ void mostrarListadoUsuariosURJC(tipoListaUsuarios lista) {
     } else {
         ordenarUsuariosAlfabeticamente(&lista);
         for (i = 0; i < lista.tope; i++) {
-            printf("Usuario numero %d",i+1);
+            printf("\nUsuario numero %d",i+1);
             mostrarUsuario(lista.listaUsuarios[i]);
         }
     }
@@ -281,16 +297,17 @@ void mostrarRecurso (tipoRecurso recurso){
     printf("\nAmbito: %s", recurso.ambito);
     printf("\nGenero: %s", recurso.genero);
     printf("\nCoste: %.2f", recurso.coste);
-    printf("\nDuracion: %d", recurso.duracion);
+    printf("\nDuracion: %d\n", recurso.duracion);
 }
 void mostrarListadoRecursos(tipoListaRecursos lista){
     int i;
-    printf("Multimedia URJCTV \n");
+    printf("\n Multimedia URJCTV \n");
     if(lista.tope<=0){
         printf("La lista esta vacía \n");
     }else{
         ordenarId(&lista);
         for(i = 0;i<lista.tope;i++){
+            printf("\nRecurso numero %d:",i+1);
             mostrarRecurso (lista.listaRecursos[i]);
         }
     }
@@ -298,7 +315,7 @@ void mostrarListadoRecursos(tipoListaRecursos lista){
 void mostrarReproduccion(tipoReproduccion reproduccion){
     printf("\nFecha: %s",reproduccion.fecha);
     printf("\nUsuario: %s",reproduccion.usuarioURJC);
-    printf("\nID: %d",reproduccion.id);
+    printf("\nID: %d\n",reproduccion.id);
 }
 void mostrarListadoReproducciones(tipoListaReproducciones lista){
     int i;
@@ -308,13 +325,14 @@ void mostrarListadoReproducciones(tipoListaReproducciones lista){
     }else{
         ordenarPorFecha(&lista);
         for(i = 0;i<lista.tope;i++){
-            printf("\n Reproduccion numero %d:   ",i+1);
+            printf("\n Reproduccion numero %d:  ",i+1);
             mostrarReproduccion(lista.listaReproduccion[i]);
         }
     }
 }
 
 void leerUsuario (tipoUsuario *nuevoUsuario){
+    char tipoPerfil;
     printf("Nombre del usuario:");
     fflush(stdin);
     gets(nuevoUsuario->nombre);
@@ -328,17 +346,38 @@ void leerUsuario (tipoUsuario *nuevoUsuario){
         fflush(stdin);
         gets(nuevoUsuario->dni);
         fflush(stdin);
-        printf("%s\n",nuevoUsuario->dni);
     }while(strlen(nuevoUsuario->dni) != MAXDNI);
     printf("Usuario URJC:");
     fflush(stdin);
     gets(nuevoUsuario->usuarioURJC);
     nuevoUsuario->saldo=1000;
-    printf("Elija el perfil del usuario (ALU/PDI/PTGAS/PPI): ");
-    gets(nuevoUsuario->perfil);
-    fflush(stdin);
+    do{
+        printf("Elija el perfil del usuario:\n");
+        printf("a) ALU -Alumno\n");
+        printf("b) PDI -Personal Docente Investigador\n");
+        printf("c) PTGAS -Personal Tecnico, de Gestion y de Administracion y Servicios\n");
+        printf("d) PPI -Personal de Proyectos de Investigacion\n");
+        fflush(stdin);
+        scanf("%c",&tipoPerfil);
+        fflush(stdin);
+        switch(tipoPerfil) {
+            case 'a':
+                strcpy(nuevoUsuario->perfil, "ALU");
+                break;
+            case 'b':
+                strcpy(nuevoUsuario->perfil, "PDI");
+                break;
+            case 'c':
+                strcpy(nuevoUsuario->perfil, "PTGAS");
+                break;
+            case 'd':
+                strcpy(nuevoUsuario->perfil, "PPI");
+                break;
+            default:
+                printf("Opcion incorrecta\n");
+        }
+    }while((tipoPerfil!='a')&&(tipoPerfil!='b')&&(tipoPerfil!='c')&&(tipoPerfil!='d'));
 }
-
 int buscarUsuarioURJC (tipoListaUsuarios lista, char usuarioURJC[MAXCHARUSUARIO]) {
     int i;
     i = 0;
@@ -429,7 +468,9 @@ void leerRecurso (tipoRecurso *nuevoRecurso,tipoListaRecursos lista){
     }while(strlen(nuevoRecurso->ambito)>(MAXAMBITO+1));
     do{
         printf("Genero (documental, formativo, accion, ciencia ficcion, drama, comedia, belicas, romantica, terror, animacion, historica o suspense):");
+        fflush(stdin);
         gets( nuevoRecurso->genero);
+        fflush(stdin);
     }while(strlen(nuevoRecurso->genero)>(MAXGENERO+1));
     do{
         printf("Coste:");
@@ -455,7 +496,7 @@ int buscarRecursoURJC (tipoListaRecursos lista, int id ) {
 void altaRecurso (tipoListaRecursos *lista, tipoRecurso nuevo){
     int posicion;
     if(lista->tope>=MAXRECURSOS){
-        printf("La lista de canciones esta llena, no se puede aÃ±adir el recurso\n");
+        printf("La lista de canciones esta llena, no se puede anyadir el recurso\n");
     }
     else{
         posicion= buscarRecursoURJC(*lista, nuevo.id);
@@ -510,7 +551,7 @@ int buscarReproduccionID (tipoListaReproducciones lista, int id) {
     }
     return i;
 }
-void reproduccionRecursoMultimedia (int posicionUsuario, int posicionRecurso, tipoListaRecursos *listaRecursos, tipoListaUsuarios *listaUsuarios, tipoListaReproducciones *listaReproducciones ){
+void reproduccionRecursoMultimedia (int posicionUsuario, int posicionRecurso, tipoListaRecursos *listaRecursos, tipoListaUsuarios *listaUsuarios, tipoListaReproducciones *listaReproducciones,char fecha[MAXFECHA+1] ){
     if (listaReproducciones->tope == MAXREPRODUCCIONES){
         printf("No se pueden realizar mas reproducciones, la lista esta llena");
     }else{
@@ -519,7 +560,7 @@ void reproduccionRecursoMultimedia (int posicionUsuario, int posicionRecurso, ti
             listaReproducciones->tope ++;
             strcpy(listaReproducciones->listaReproduccion[listaReproducciones->tope-1].usuarioURJC,listaUsuarios->listaUsuarios[posicionUsuario].usuarioURJC);
             listaReproducciones->listaReproduccion[listaReproducciones->tope-1].id = listaRecursos->listaRecursos[posicionRecurso].id;
-            //listaReproducciones->listaReproduccion[listaReproducciones->tope-1].fecha = generarFecha();
+            strcpy(listaReproducciones->listaReproduccion[listaReproducciones->tope-1].fecha,fecha);
             printf("Se ha anyadido una reproduccion ");
         }else{
             printf("El usuario no tiene suficiente credito");
@@ -590,38 +631,38 @@ void guardarReproducciones(FILE *punteroFichero,tipoListaReproducciones listaDeR
 }
 
 void cargarUsuarios(FILE *punteroFichero,tipoListaUsuarios *listaDeUsuarios){
-   char ruta [MAXNOMBRE];
-   int i, fwControl, resultado;
-   tipoUsuario usuario;
-   printf("\nIntroduzca la ruta del fichero");
-   scanf("%s", ruta);
-   punteroFichero = fopen(ruta, "r");
-   if (punteroFichero != NULL){
-       printf("\nEl fichero se ha abierto correctamente.\n");
-       while ( feof(punteroFichero) == 0){
-           resultado = fread(&usuario, sizeof(tipoUsuario), 1, punteroFichero);
-           if (resultado == 1){
-              altaUsuario( listaDeUsuarios, usuario);
-           }
-       }
-       if (ferror(punteroFichero) != 0){
-           printf("\nHa ocurrido algun error en la lectura de contactos.\n");
-       } else {
-           printf("\nLa lectura de contactos ha tenido exito.\n");
-       }
-       fwControl = fclose(punteroFichero);
-       if (fwControl != 0){
-           printf("El fichero de escritura ha dado un error en el cierre.\n");
-       } else {
-           printf("El fichero de escritura se ha cerrado correctamente.\n");
-       }
-   }
+    char ruta [MAXNOMBRE];
+    int i, fwControl, resultado;
+    tipoUsuario usuario;
+    printf("\nIntroduzca la ruta del fichero:");
+    scanf("%s", ruta);
+    punteroFichero = fopen(ruta, "r");
+    if (punteroFichero != NULL){
+        printf("\nEl fichero se ha abierto correctamente.\n");
+        while ( feof(punteroFichero) == 0){
+            resultado = fread(&usuario, sizeof(tipoUsuario), 1, punteroFichero);
+            if (resultado == 1){
+                altaUsuario( listaDeUsuarios, usuario);
+            }
+        }
+        if (ferror(punteroFichero) != 0){
+            printf("\nHa ocurrido algun error en la lectura de contactos.\n");
+        } else {
+            printf("\nLa lectura de contactos ha tenido exito.\n");
+        }
+        fwControl = fclose(punteroFichero);
+        if (fwControl != 0){
+            printf("El fichero de escritura ha dado un error en el cierre.\n");
+        } else {
+            printf("El fichero de escritura se ha cerrado correctamente.\n");
+        }
+    }
 }
 void cargarRecursos(FILE *punteroFichero,tipoListaRecursos *listaDeRecursos ){
     char ruta [MAXNOMBRE];
     int i, fwControl, resultado;
     tipoRecurso recurso;
-    printf("\nIntroduzca la ruta del fichero");
+    printf("\nIntroduzca la ruta del fichero:");
     scanf("%s", ruta);
     punteroFichero = fopen(ruta, "r");
     if (punteroFichero != NULL){
@@ -645,11 +686,42 @@ void cargarRecursos(FILE *punteroFichero,tipoListaRecursos *listaDeRecursos ){
         }
     }
 }
+void generarFecha (char *fecha[MAXFECHA+1],char anyo[5],char mes[3], char dia[3]){
+    fecha[0]='\0';
+    do{
+        printf("\nIntroduzca el dia de hoy: ");
+        scanf("%s",dia);
+    }while(strlen(dia) > 3);
+    do {
+        printf("\nIntroduzca el mes: ");
+        scanf("%s",mes);
+    }while(strlen(mes) > 3);
+    do{
+        printf("\nIntroduzca el anyo: ");
+        scanf("%s",anyo);
+    }while(strlen(anyo) > 5);
+    strcat(fecha,anyo);
+    strcat(fecha,"-");
+    strcat(fecha,mes);
+    strcat(fecha,"-");
+    strcat(fecha,dia);
+}
+
+void altaReproduccion(tipoListaReproducciones *lista, tipoReproduccion nuevo){
+    if(lista->tope>=MAXREPRODUCCIONES){
+        printf("La lista de reproducciones, esta llena no se puede anyadir\n");
+    }
+    else{
+        lista->listaReproduccion[lista->tope]=nuevo;
+        lista->tope++;
+        printf("Recurso anyadido con exito\n");
+    }
+}
 void cargarReproducciones(FILE *punteroFichero,tipoListaReproducciones *listaDeReproducciones){
     char ruta [MAXNOMBRE];
     int i, fwControl, resultado;
     tipoReproduccion reproduccion;
-    printf("\nIntroduzca la ruta del fichero");
+    printf("\nIntroduzca la ruta del fichero:");
     scanf("%s", ruta);
     punteroFichero = fopen(ruta, "r");
     if (punteroFichero != NULL){
@@ -657,7 +729,7 @@ void cargarReproducciones(FILE *punteroFichero,tipoListaReproducciones *listaDeR
         while ( feof(punteroFichero) == 0){
             resultado = fread(&reproduccion, sizeof(tipoReproduccion ), 1, punteroFichero);
             if (resultado == 1){
-               // altaReproduccion( listaDeReproducciones, reproduccion);
+                altaReproduccion( listaDeReproducciones, reproduccion);
             }
         }
         if (ferror(punteroFichero) != 0){
@@ -674,14 +746,14 @@ void cargarReproducciones(FILE *punteroFichero,tipoListaReproducciones *listaDeR
     }
 }
 int contadorReproducciones(tipoListaReproducciones lista, char usuarioURJC[MAXNOMBRE]){
-    int contador =0;
+    int contador = 0;
     for (int i=0; i<=lista.tope; i++){
-        if (strcmp(usuarioURJC,lista.listaReproduccion[i].usuarioURJC)){
-            i++;
+        if (strcmp(usuarioURJC,lista.listaReproduccion[i].usuarioURJC)==0){
+            contador++;
         }
     }
     return contador;
-};
+}
 void relojArena(){
     // 3 segundos de espera...
     sleep(3);
@@ -689,7 +761,7 @@ void relojArena(){
 void generarInformeUsuarios(FILE *punteroFichero,tipoListaUsuarios listaUsuarios, tipoListaReproducciones listaReproducciones){
     char ruta [MAXNOMBRE];
     int fwControl;
-    printf("\nIntroduzca la ruta del fichero");
+    printf("\nIntroduzca la ruta del fichero:");
     scanf("%s", ruta);
 //Apertura del fichero escritura
     punteroFichero= fopen(ruta,"w");
@@ -697,7 +769,7 @@ void generarInformeUsuarios(FILE *punteroFichero,tipoListaUsuarios listaUsuarios
         printf("El fichero de escritura se ha abierto correctamente.\n");
         printf(" Escribiendo...\n\n");
         //Escritura en el fichero
-        for (int i = 0; i <= listaUsuarios.tope ; ++i) {
+        for (int i = 0; i < listaUsuarios.tope ; ++i) {
             fprintf(punteroFichero,"Usuario URJC: %s  Saldo: %.2f  Perfil: %s Reproducciones: %d\n",listaUsuarios.listaUsuarios[i].usuarioURJC, listaUsuarios.listaUsuarios[i].saldo,listaUsuarios.listaUsuarios[i].perfil,
                     contadorReproducciones(listaReproducciones, listaUsuarios.listaUsuarios[i].usuarioURJC));
         }
@@ -755,27 +827,3 @@ void ordenarPorFecha(tipoListaReproducciones *lista) {
 }
 
 
-/*
-void bajaUsuario (tipoListaUsuarios *lista, tipoUsuario eliminado,tipoListaReproducciones *lista2) {
-    int posicion, pos2;
-    int i, j;
-    posicion = buscarUsuarioURJC(*lista, eliminado.usuarioURJC);
-    if (posicion == -1) {
-        printf("El usuario no esta en la lista\n");
-    } else {
-        for (i = posicion; i < lista->tope; i++) {
-            lista->listaUsuarios[i] = lista->listaUsuarios[i + 1];
-        }
-        lista->tope--;
-        printf("Usuario eliminado\n");
-    }
-    do {
-        pos2 = buscarReproduccionURJC(*lista2, eliminado.usuarioURJC);
-        for (j = pos2; j < lista->tope; j++) {
-            lista2->listaReproduccion[j] = lista2->listaReproduccion[j + 1];
-        }
-        lista2->tope--;
-    } while (pos2!=-1);
-    printf("Las reproducciones del usuario han sido eliminadas\n");
-}
-*/

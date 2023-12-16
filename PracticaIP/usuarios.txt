@@ -1,0 +1,10 @@
+Usuario URJC: maria.f  Saldo: 766.00  Perfil: ALU Reproducciones: 1
+Usuario URJC: juan.r  Saldo: 680.00  Perfil: ALU Reproducciones: 1
+Usuario URJC: sofia.m  Saldo: 877.00  Perfil: PDI Reproducciones: 1
+Usuario URJC: alejandro.  Saldo: 1000.00  Perfil: PTGAS Reproducciones: 0
+Usuario URJC: gabriela.t  Saldo: 1000.00  Perfil: PPI Reproducciones: 0
+Usuario URJC: carlos.h  Saldo: 1000.00  Perfil: PDI Reproducciones: 0
+Usuario URJC: analaura.h  Saldo: 1000.00  Perfil: PTGAS Reproducciones: 0
+Usuario URJC: javier.l  Saldo: 1000.00  Perfil: PPI Reproducciones: 0
+Usuario URJC: andrea.r  Saldo: 820.00  Perfil: ALU Reproducciones: 1
+Usuario URJC: luismi.g  Saldo: 588.00  Perfil: ALU Reproducciones: 1
